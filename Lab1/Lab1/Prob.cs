@@ -12,7 +12,7 @@ namespace Lab1
         public double M;
         public double N;
         public int r;
-        public int n;
+        public int n;//количество экспериментов
 
         public ticket(int _M, int _N, int _r, int _n)
         {
@@ -25,10 +25,11 @@ namespace Lab1
     class Probability
     {
         
-        public int[] ksiValue;
-        public double[] ksiRasp;
-        public int[] ksiNumb;
-        public double[] ksiProbability;
+        public int[] ksiValue;//значения, которые принимает
+        public double[] ksiRasp;// узлы отрезков 
+        public int[] ksiNumb;//массив, и-ая ячейка показывает сколько в интервал попало величин
+        public double[] ksiProbability;//вероятности от значений случайной величины
+        public double[] ksiN;// сколько попало величин в интервал / количесвто экмпериментов
         public int ksiCount;
 
 
@@ -81,88 +82,65 @@ namespace Lab1
             }
         }
 
+        public void FillksiN(int n)
+        {
+            ksiN = new double[ksiCount + 1];
+            for (int i = 0; i <= ksiCount; i++)
+            {
+                ksiN[i] = (double)ksiNumb[i] / n;
+            }
+
+        }
+
         public void FillKsiRasp()
         {
 
-            ksiRasp = new double[ksiCount + 2];
-            for (int j = 0; j < (ksiCount + 2); j++)
+            ksiRasp = new double[ksiCount + 1];
+            for (int j = 0; j < (ksiCount + 1); j++)
             {
                 ksiRasp[j] = 0;
             }
             ksiRasp[1] = ksiProbability[0];
-            for (int k = 2; k < (ksiCount + 2); k++)
+            for (int k = 2; k < (ksiCount+1 ); k++)
             {
-                ksiRasp[k] =ksiRasp[k - 1] + ksiProbability[k - 1];
+                ksiRasp[k] =ksiRasp[k - 1] + ksiProbability[k-1];
 
             }
 
         }
 
-        public void Exp(int count)
+        public double[] Generation(int count)
         {
-
-            double U;
-            ksiNumb = new int[ksiCount + 1];
-            for (int k = 0; k <= ksiCount; k++)
+            Random rand = new Random();
+            double[] n = new double[count];
+            for (int i=0; i< count; i++)
             {
-                ksiNumb[k] = 0;
-            }
-            for (int i = 0; i < count; i++)
-            {
-                Random rand = new Random();
-                U = rand.NextDouble();
 
-                for (int j = 1; j < ksiCount; j++)
-                {
-                    if ((U >= ksiRasp[j]) && (U < ksiRasp[j + 1]))
-                    {
-                        ksiNumb[j - 1]++;
-                        break;
-                    }
-                    break;
-                }
+                n[i] = (double)(rand.Next(100, 999)) / 1000.0;
+
             }
+            return n;
         }
 
+        public int[] Exp(int count)
+        {
+            int[] n = new int[ksiCount + 1];
+            double[] itr = new double[ksiCount + 2];
+            double[] g = new double[count + 1];
+            for (int i = 0; i < ksiCount + 1; i++)
+                n[i] = 0;
+            itr = ksiRasp;
+            g = Generation(count);
 
-
-
-
-        //        do
-        //        {
-        //            if (U >= ksiRasp[j + 1])
-        //            {
-        //                j++;
-        //            }
-        //            else
-        //                break;
-        //        }
-        //        while ((U >= ksiRasp[j]) && (U < ksiRasp[j + 1]));
-
-        //        ksiNumb[j]++;
-        //    }
-        //}
-
-
-
-            //for (int i = 0; i < count; i++)
-            //{
-            //    U = rnd.Next(0, 1);
-            //    for (int j = 1; j < (ksiCount + 1); j++)
-            //    {
-            //        if (U > a)
-            //        {
-            //            a = ksiRasp[j + 1];
-            //        }
-            //        else
-            //        {
-            //            ksiNumb[j - 1]++;
-            //            break;
-            //        }
-            //        //break;
-            //    }
-            //}
-     //   }
+            for (int i = 0; i < count; i++)
+                for (int j = 0; j < ksiCount ; j++)
+                {
+                    if ((g[i] < itr[j + 1]) && (g[i] >= itr[j]))
+                        n[j]++;
+                }
+            return n;
+        }
+       
 
         public void Raspr(ticket T)
         {
@@ -171,10 +149,13 @@ namespace Lab1
             FillKsiProbability(T);
             FillKsiProbability(T);
             FillKsiRasp();
-            Exp(T.n);
+            ksiNumb = Exp(T.n);
+            FillksiN(T.n);
         }
-
+        
 
     }
 }
-    
+
+
+

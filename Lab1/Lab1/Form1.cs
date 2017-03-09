@@ -14,8 +14,7 @@ using System.Data.SqlClient;
 
 namespace Lab1
 {
-    //Random rnd = new Random();
-
+    
     public partial class Form1 : Form
     {
         Random rnd = new Random();
@@ -46,7 +45,8 @@ namespace Lab1
         bool CheckData(ticket _T)
         {
 
-            if ((_T.M>_T.N)||(_T.r>_T.N)||(_T.r>_T.M))
+            if ((_T.M>_T.N)||(_T.r>_T.M))
+          
             {
                 return false;
             }
@@ -69,21 +69,21 @@ namespace Lab1
             table.Columns.Add("-");
           
 
-            DataRow str1 = table.NewRow();
-            for (int j = 0; j < (columnCount) ; j++)
-            {
-                str1[j] = Convert.ToString(P.ksiValue[j]);
-            }
-            table.Rows.Add(str1);
+            //DataRow str1 = table.NewRow();
+            //for (int j = 0; j < (columnCount) ; j++)
+            //{
+            //    str1[j] = Convert.ToString(P.ksiValue[j]);
+            //}
+            //table.Rows.Add(str1);
 
-            DataRow str2 = table.NewRow();
-            for (int j = 0; j < (columnCount) ; j++)
-            {
-               // str2[j]=Math.Round(P.ksiProbability[j], 8);
-                str2[j] = P.ksiProbability[j];
-                //str1[j]= Math.Round(P.ksiProbability[j],8);
-            }
-            table.Rows.Add(str2);
+            //DataRow str2 = table.NewRow();
+            //for (int j = 0; j < (columnCount) ; j++)
+            //{
+            //   // str2[j]=Math.Round(P.ksiProbability[j], 8);
+            //    str2[j] = P.ksiProbability[j];
+              
+            //}
+            //table.Rows.Add(str2);
 
             DataRow str3 = table.NewRow();
             for (int j = 0; j < (columnCount); j++)
@@ -92,12 +92,19 @@ namespace Lab1
             }
             table.Rows.Add(str3);
 
-            DataRow str4 = table.NewRow();
+            //DataRow str4 = table.NewRow();
+            //for (int j = 0; j < (columnCount); j++)
+            //{
+            //    str4[j] = Convert.ToString(P.ksiRasp[j]);
+            //}
+            //table.Rows.Add(str4);
+
+            DataRow str5 = table.NewRow();
             for (int j = 0; j < (columnCount); j++)
             {
-                str4[j] = Convert.ToString(P.ksiRasp[j]);
+                str5[j] = Convert.ToString(P.ksiN[j]);
             }
-            table.Rows.Add(str4);
+            table.Rows.Add(str5);
 
             view = new DataView(table);
             dataGrid1.DataSource = view;
@@ -106,26 +113,23 @@ namespace Lab1
 
         private void button2_Click(object sender, EventArgs e)
         {
+  
             Probability P = new Probability();
             P.Raspr(T);
-           // P.GetProbability(T);
-           // P.Exp(T);
             MakeDataTableAndDisplay(P);
 
-
-            //string s = " ";
-            double norm = 0;
-            for (int i = 0; i < (P.ksiCount+1); i++)
+           double norm = 0;
+            for (int i = 0; i < (P.ksiCount + 1); i++)
             {
                 norm += P.ksiProbability[i];
             }
-          //  if (Math.Abs(norm - 1) < eps)
-           // {
-                MessageBox.Show(Convert.ToString(norm));
-           // }
+              if (Math.Abs(norm - 1) < eps)
+             {
+            MessageBox.Show("Нормировка в порядке!");
+             }
         }
 
-   
+
     }
     }
 

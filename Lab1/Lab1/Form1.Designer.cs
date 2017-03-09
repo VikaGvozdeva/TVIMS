@@ -113,10 +113,10 @@
             // dataGrid1
             // 
             this.dataGrid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGrid1.Location = new System.Drawing.Point(310, 252);
+            this.dataGrid1.Location = new System.Drawing.Point(504, 44);
             this.dataGrid1.Name = "dataGrid1";
             this.dataGrid1.RowTemplate.Height = 28;
-            this.dataGrid1.Size = new System.Drawing.Size(774, 150);
+            this.dataGrid1.Size = new System.Drawing.Size(1189, 340);
             this.dataGrid1.TabIndex = 8;
             // 
             // label4
@@ -139,7 +139,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1096, 407);
+            this.ClientSize = new System.Drawing.Size(1801, 425);
             this.Controls.Add(this.textBox4);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.dataGrid1);
