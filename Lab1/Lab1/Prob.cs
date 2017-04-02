@@ -9,10 +9,10 @@ namespace Lab1
 
     public struct ticket
     {
-        public double M;
-        public double N;
+        public int M;
+        public int N;
         public int r;
-        public int n;//количество экспериментов
+        public int n;
 
         public ticket(int _M, int _N, int _r, int _n)
         {
@@ -30,62 +30,107 @@ namespace Lab1
         public int[] ksiNumb;//массив, и-ая ячейка показывает сколько в интервал попало величин
         public double[] ksiProbability;//вероятности от значений случайной величины
         public double[] ksiN;// сколько попало величин в интервал / количесвто экмпериментов
+        public double[] ksiV;
+        public double[] ksiV1;
+        public double[] n;
         public int ksiCount;
+        public int min;
 
 
-        private double factorial(double n)
+
+        public double C(int i, int j)
         {
-            return (n == 0) ? 1 : n * factorial(n - 1);
-
+            double k = (factorial(j)) / (factorial(i) * factorial(j - i));
+            return k;
         }
 
-        public void SetKsiCount(ticket T)
+        public double factorial(int i)
         {
-            ksiCount = Math.Min((int)T.M, T.r);
-        }
+            double result;
 
-        public int GetKsiCount(ticket T)
-        {
-            return ksiCount;
-        }
-
-        public void FillKsiValue()
-        {
-            ksiValue = new int[ksiCount + 1];
-
-            for (int j = 0; j <= ksiCount; j++)
+            if (i < 1)
             {
-                ksiValue[j] = j;
+                result = 1;
             }
+            else
+            {
+                result = factorial(i - 1) * i;
+
+            }
+            return result;
+
         }
 
         public void FillKsiProbability(ticket T)
         {
-            SetKsiCount(T);
-            double r = T.r;
-            ksiCount = Math.Min((int)T.M, T.r);
-            ksiProbability = new double[ksiCount + 1];
-            for (int i = 0; i <= ksiCount; i++)
+            double k = 1;
+            if (T.r > T.M)
             {
-                //ksiProbability[i] = Convert.ToDouble((Math.Pow((1 - (T.M / T.N)), T.r - i)) * (Math.Pow((T.M / T.N), i)));
-                if ((i == 0) || (i == T.r))
+                if (T.r <= T.N - T.M)
                 {
-                    ksiProbability[i] = ((Math.Pow((1 - (T.M / T.N)), r - i)) * (Math.Pow((T.M / T.N), i)));
+                    ksiCount = T.M;
+                    //??
+                    ksiProbability = new double[ksiCount + 1];
+                    ksiValue = new int[ksiCount + 1];
+                    for (int i = 0; i <= ksiCount; i++)
+                    {
+                        ksiValue[i] = i;
+                        k = 1;
+                        k *= (C(i, T.M) * C(T.r - i, T.N - T.M)) / (C(T.r, T.N));
+                        if (k != 1)
+                        {
+                            ksiProbability[i] = k;
+
+                        }
+
+                    }
                 }
                 else
                 {
-                    double coef = (factorial(r) / (factorial((double)(i)) * factorial((double)(r - i))));
-                    ksiProbability[i] = coef*((Math.Pow((1 - (T.M / T.N)), T.r - i)) * (Math.Pow((T.M / T.N), i)));
-                }
+                    ksiCount = T.M;
+                    ksiProbability = new double[ksiCount + 1];
+                    ksiValue = new int[ksiCount + 1];
+                    min = T.r - (T.N - T.M);
 
+                    for (int i = min; i <= ksiCount; i++)
+                    {
+                        ksiValue[i - min] = i;
+                        k = 1;
+                        k *= (C(i, T.M) * C(T.r - i, T.N - T.M)) / (C(T.r, T.N));
+                        if ((k != 1) && (k != 0))
+                        {
+                            ksiProbability[i - min] = k;
+                        }
+
+                    }
+                }
+            }
+            else
+            {
+                ksiCount = T.r;
+                ksiProbability = new double[ksiCount + 1];
+                ksiValue = new int[ksiCount + 1];
+
+                for (int i = 0; i <= ksiCount; i++)
+                {
+                    ksiValue[i] = i;
+                    k = 1;
+                    k *= (C(i, T.M) * C(ksiCount - i, T.N - T.M)) / (C(T.r, T.N));
+                    if (k != 1)
+                    {
+                        ksiProbability[i] = k;
+
+                    }
+
+                }
 
             }
         }
 
         public void FillksiN(int n)
         {
-            ksiN = new double[ksiCount + 1];
-            for (int i = 0; i <= ksiCount; i++)
+            ksiN = new double[ksiCount];
+            for (int i = 0; i <ksiCount; i++)
             {
                 ksiN[i] = (double)ksiNumb[i] / n;
             }
@@ -95,17 +140,18 @@ namespace Lab1
         public void FillKsiRasp()
         {
 
-            ksiRasp = new double[ksiCount + 1];
-            for (int j = 0; j < (ksiCount + 1); j++)
+            ksiRasp = new double[ksiCount+2];
+            for (int j = 0; j < (ksiCount+2); j++)
             {
                 ksiRasp[j] = 0;
             }
             ksiRasp[1] = ksiProbability[0];
-            for (int k = 2; k < (ksiCount+1 ); k++)
+            for (int k = 2; k < (ksiCount+1); k++)
             {
                 ksiRasp[k] =ksiRasp[k - 1] + ksiProbability[k-1];
 
             }
+            ksiRasp[ksiCount + 1] = 1;
 
         }
 
@@ -113,39 +159,88 @@ namespace Lab1
         {
             Random rand = new Random();
             double[] n = new double[count];
+            double[] ksiV = new double[count];
             for (int i=0; i< count; i++)
             {
-
-                n[i] = (double)(rand.Next(100, 999)) / 1000.0;
+                
+                n[i] = (double)(rand.Next(0, 100000)) / 100000.0;
+                ksiV[i] = n[i];
 
             }
             return n;
         }
 
+       
         public int[] Exp(int count)
         {
             int[] n = new int[ksiCount + 1];
             double[] itr = new double[ksiCount + 2];
             double[] g = new double[count + 1];
             for (int i = 0; i < ksiCount + 1; i++)
+            {
                 n[i] = 0;
-            itr = ksiRasp;
+            }
+            for (int i = 0; i < ksiCount + 2; i++)
+            {
+                itr[i] = ksiRasp[i];
+            }
             g = Generation(count);
 
             for (int i = 0; i < count; i++)
-                for (int j = 0; j < ksiCount ; j++)
+                for (int j = 0; j < ksiCount + 1; j++)
                 {
                     if ((g[i] < itr[j + 1]) && (g[i] >= itr[j]))
                         n[j]++;
                 }
             return n;
         }
+
+        public void Part2(double[] ksiV, int count)
+        {
+            int numb;
+            List<double> l = new List<double>();
+            bool c;
+            for (int j = 0; j < count; j++)
+            {
+                c = false;
+                for (int i = 0; i < count; i++)
+                {
+                    if (ksiV[i] == ksiV[j] && i != j)
+                    {
+                        c = true;
+                        break;
+                    }
+                }
+                if (!c) l.Add(ksiV[j]);
+                // ksiV1[t++] = ksiV[j];
+            }
+            numb = l.Count;
+            ksiV1 = new double[numb];
+            for (int i = 0; i < numb; i++)
+            {
+                ksiV1[i] = l[i];
+            }
+            ///next step
+
+            n = new double[numb]; 
+            for (int i=0; i< numb;i++)
+                for(int j=0; j< count;j++)
+                {
+                    if (ksiV[j]==ksiV1[i])
+                    {
+                        n[i]++;
+                    }
+                }
+
+
+
+        }
        
 
         public void Raspr(ticket T)
         {
-            SetKsiCount(T);
-            FillKsiValue();
+            //SetKsiCount(T);
+            //FillKsiValue(T);
             FillKsiProbability(T);
             FillKsiProbability(T);
             FillKsiRasp();
