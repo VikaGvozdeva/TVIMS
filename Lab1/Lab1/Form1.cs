@@ -17,7 +17,6 @@ namespace Lab1
     
     public partial class Form1 : Form
     {
-       // Random rnd = new Random();
         ticket T;
         double eps = 0.0001;
 
@@ -57,8 +56,10 @@ namespace Lab1
 
         private void MakeDataTableAndDisplay(Probability P)
         {
+            chart1.Series[0].Points.Clear();
+            chart1.Series[1].Points.Clear();
             dataGrid1.ColumnCount = P.ksiCount - P.min + 1;
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 2; i++)
             {
                 dataGrid1.Rows.Add();
             }
@@ -67,64 +68,80 @@ namespace Lab1
             for (int i = 0; i < P.ksiCount - P.min + 1; i++)
             {
                 dataGrid1.Rows[0].Cells[i].Value = P.min + i;
-                dataGrid1.Rows[1].Cells[i].Value = P.ksiProbability[i];
-                dataGrid1.Rows[2].Cells[i].Value = P.ksiNumb[i];
-                dataGrid1.Rows[3].Cells[i].Value = P.ksiRasp[i];
-                dataGrid1.Rows[4].Cells[i].Value = (double)(P.ksiNumb[i] / (double)T.n);
+                //dataGrid1.Rows[1].Cells[i].Value = P.ksiProbability[i];
+                dataGrid1.Rows[1].Cells[i].Value = P.ksiNumb[i];
+                //dataGrid1.Rows[3].Cells[i].Value = P.ksiRasp[i];
+                //dataGrid1.Rows[4].Cells[i].Value = P.ksiN[i];
+                dataGrid1.Rows[2].Cells[i].Value = (double)(P.ksiNumb[i] / (double)T.n);
 
             }
-            //DataTable table = new DataTable();
-            //DataView view;
-            //int columnCount = P.ksiCount + 1;
-
-            //for (int i = 0; i < (columnCount); i++)
-            //{
-            //    //table.Columns.Add("Yi = " + i.ToString());
-            //    table.Columns.Add("Yi = " + P.ksiValue[i].ToString());
-            //}
-
-            ////table.Columns.Add("-");
 
 
-            //DataRow str1 = table.NewRow();
-            //for (int j = 0; j < (columnCount); j++)
-            //{
-            //    str1[j] = Convert.ToString(P.ksiValue[j]);
-            //}
-            //table.Rows.Add(str1);
+            dataGridView1.ColumnCount = 8;
+            for (int i = 0; i < 2; i++)
+            {
+                dataGridView1.Rows.Add();
+            }
 
-            //DataRow str2 = table.NewRow();
-            //for (int j = 0; j < (columnCount); j++)
-            //{
-            //    // str2[j]=Math.Round(P.ksiProbability[j], 8);
-            //    str2[j] = P.ksiProbability[j];
+            dataGridView1.Rows[0].Cells[0].Value = "E";
+            dataGridView1.Rows[0].Cells[1].Value = "x";
+            dataGridView1.Rows[0].Cells[2].Value = "|E-x|";
+            dataGridView1.Rows[0].Cells[3].Value = "D";
+            dataGridView1.Rows[0].Cells[4].Value = "S^2";
+            dataGridView1.Rows[0].Cells[5].Value = "|D-S^2|";
+            dataGridView1.Rows[0].Cells[6].Value = "Me";
+            dataGridView1.Rows[0].Cells[7].Value = "R";
 
-            //}
-            //table.Rows.Add(str2);
+            dataGridView1.Rows[1].Cells[0].Value = P.mw;
+            dataGridView1.Rows[1].Cells[1].Value = P.x_;
+            dataGridView1.Rows[1].Cells[2].Value = P.mw_x;
+            dataGridView1.Rows[1].Cells[3].Value = P.disp;
+            dataGridView1.Rows[1].Cells[4].Value = P.S2;
+            dataGridView1.Rows[1].Cells[5].Value = P.disp_S2;
+            dataGridView1.Rows[1].Cells[6].Value = P.Me;
+            dataGridView1.Rows[1].Cells[7].Value = P.R;
 
-            //DataRow str3 = table.NewRow();
-            //for (int j = 0; j < (columnCount); j++)
-            //{
-            //    str3[j] = Convert.ToString(P.ksiNumb[j]);
-            //}
-            //table.Rows.Add(str3);
+            dataGridView2.ColumnCount = P.ksiCount - P.min + 1;
 
-            //DataRow str4 = table.NewRow();
-            //for (int j = 0; j < (columnCount); j++)
-            //{
-            //    str4[j] = Convert.ToString(P.ksiRasp[j]);
-            //}
-            //table.Rows.Add(str4);
+            for (int i = 0; i < 2; i++)
+            {
+                dataGridView2.Rows.Add();
+            }
 
-            //DataRow str5 = table.NewRow();
-            //for (int j = 0; j < (columnCount); j++)
-            //{
-            //    str5[j] = Convert.ToString(P.ksiN[j]);
-            //}
-            //table.Rows.Add(str5);
+            for (int i = 0; i < P.ksiCount - P.min + 1; i++)
+            {
+                dataGridView2.Rows[0].Cells[i].Value = P.min + i;
+                dataGridView2.Rows[1].Cells[i].Value = P.ksiProbability[i];
+                //dataGridView2.Rows[2].Cells[i].Value = (double)(P.ksiNumb[i] / (double)T.n);
+                dataGridView2.Rows[2].Cells[i].Value = P.prob[i];
 
-            //view = new DataView(table);
-            //dataGrid1.DataSource = view;
+            }
+
+            textBox5.Text = P.maxProb.ToString();
+
+
+            int X = 0;
+            double Y = 0;
+            int X1 = 0;
+            double Y1 = 0;
+
+            for (int i = 0; i < P.ksiCount  + 1; i++)
+            {
+
+                    X = P.ksiValue[i];
+
+                Y = P.fun[i];
+                chart1.Series[0].Points.AddXY(X, Y);
+            }
+
+            for (int j = 0; j < P.ksiCount + 1 ; j++)
+            {
+           
+                    X1 = P.ksiValue[j];
+                
+                Y1 = P.fun_[j];
+                chart1.Series[1].Points.AddXY(X1, Y1);
+            }
         }
 
 
@@ -146,7 +163,24 @@ namespace Lab1
             }
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            chart1.ChartAreas[0].AxisY.ScaleView.Zoom(0, 1);
+            chart1.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
+        }
 
+        private void button3_Click(object sender, EventArgs e, Probability P)
+        {
+            double X = 0;
+            double Y = 0;
+            for (int i = 0; i < P.ksiCount + 1; i++)
+            {
+                X = P.ksiValue[i];
+                Y = P.fun[i];
+                chart1.Series[2].Points.AddXY(X, Y);
+            }
+
+        }
     }
     }
 

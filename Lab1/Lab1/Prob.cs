@@ -24,15 +24,28 @@ namespace Lab1
     }
     class Probability
     {
-        
+
         public int[] ksiValue;//значения, которые принимает
         public double[] ksiRasp;// узлы отрезков 
         public int[] ksiNumb;//массив, и-ая ячейка показывает сколько в интервал попало величин
         public double[] ksiProbability;//вероятности от значений случайной величины
         public double[] ksiN;// сколько попало величин в интервал / количесвто экмпериментов
         public double[] ksiV;
-        public double[] ksiV1;
+        public double[] prob;
+        public double[] fun;
+        public double[] fun_;
+
+
         public double[] n;
+        public double maxProb;
+        public double x_;
+        public double disp_S2;
+        public double disp;
+        public double mw;
+        public double S2;
+        public double mw_x;
+        public double R;
+        public double Me;
         public int ksiCount;
         public int min;
 
@@ -69,7 +82,6 @@ namespace Lab1
                 if (T.r <= T.N - T.M)
                 {
                     ksiCount = T.M;
-                    //??
                     ksiProbability = new double[ksiCount + 1];
                     ksiValue = new int[ksiCount + 1];
                     for (int i = 0; i <= ksiCount; i++)
@@ -129,10 +141,12 @@ namespace Lab1
 
         public void FillksiN(int n)
         {
-            ksiN = new double[ksiCount];
-            for (int i = 0; i <ksiCount; i++)
+            ksiN = new double[ksiCount + 1];
+            prob = new double[ksiCount + 1];
+            for (int i = 0; i < ksiCount + 1; i++)
             {
                 ksiN[i] = (double)ksiNumb[i] / n;
+                prob[i] = (double)ksiNumb[i] / n;
             }
 
         }
@@ -140,37 +154,57 @@ namespace Lab1
         public void FillKsiRasp()
         {
 
-            ksiRasp = new double[ksiCount+2];
-            for (int j = 0; j < (ksiCount+2); j++)
+            ksiRasp = new double[ksiCount + 2];
+            for (int j = 0; j < (ksiCount + 2); j++)
             {
                 ksiRasp[j] = 0;
             }
             ksiRasp[1] = ksiProbability[0];
-            for (int k = 2; k < (ksiCount+1); k++)
+            for (int k = 2; k < (ksiCount + 1); k++)
             {
-                ksiRasp[k] =ksiRasp[k - 1] + ksiProbability[k-1];
+                ksiRasp[k] = ksiRasp[k - 1] + ksiProbability[k - 1];
 
             }
             ksiRasp[ksiCount + 1] = 1;
 
         }
 
+        public void MaxProb(double[] prob, double[] ksiProb)
+        {
+            maxProb = Math.Abs(ksiProb[0] - prob[0]);
+            for (int i = 1; i < ksiCount+1-min; i++)
+            {
+                if ((ksiProb[i] - prob[i]) < maxProb)
+                {
+                    maxProb = Math.Abs(ksiProb[i] - prob[i]);
+                }
+            }
+
+        }
         public double[] Generation(int count)
         {
             Random rand = new Random();
-            double[] n = new double[count];
-            double[] ksiV = new double[count];
-            for (int i=0; i< count; i++)
+            n = new double[count];
+            ksiV = new double[count];
+            for (int i = 0; i < count; i++)
             {
-                
+
                 n[i] = (double)(rand.Next(0, 100000)) / 100000.0;
                 ksiV[i] = n[i];
 
             }
+            if (count % 2 == 0)
+            {
+                Me = (ksiV[count / 2] + ksiV[count / 2 + 1])/2;
+            }
+            else
+            {
+                Me = ksiV[count / 2 + 1];
+            }
             return n;
         }
 
-       
+
         public int[] Exp(int count)
         {
             int[] n = new int[ksiCount + 1];
@@ -194,63 +228,123 @@ namespace Lab1
                 }
             return n;
         }
-
-        public void Part2(double[] ksiV, int count)
+       
+    public void Sort(double[] mas, int n)
         {
-            int numb;
-            List<double> l = new List<double>();
-            bool c;
-            for (int j = 0; j < count; j++)
+            double temp;
+            for (int i = 0; i < n; i++)
             {
-                c = false;
-                for (int i = 0; i < count; i++)
+                for (int j = i + 1; j < n; j++)
                 {
-                    if (ksiV[i] == ksiV[j] && i != j)
+                    if (mas[i] > mas[j])
                     {
-                        c = true;
-                        break;
+                        temp = mas[i];
+                        mas[i] = mas[j];
+                        mas[j] = temp;
                     }
                 }
-                if (!c) l.Add(ksiV[j]);
-                // ksiV1[t++] = ksiV[j];
             }
-            numb = l.Count;
-            ksiV1 = new double[numb];
-            for (int i = 0; i < numb; i++)
+      
+        }
+        public void function()
+        {
+            fun = new double[ksiCount+2];
+            fun[0] = 0;
+            for (int i=1;i<ksiCount+2;i++)
             {
-                ksiV1[i] = l[i];
+                fun[i] = fun[i - 1] + ksiProbability[i-1];
             }
-            ///next step
-
-            n = new double[numb]; 
-            for (int i=0; i< numb;i++)
-                for(int j=0; j< count;j++)
-                {
-                    if (ksiV[j]==ksiV1[i])
-                    {
-                        n[i]++;
-                    }
-                }
-
-
 
         }
-       
+        public void function_(ticket T)
+        {
+            fun_ = new double[ksiCount + 2];
+            fun_[0] = 0;
+            for (int i = 1; i < ksiCount + 2; i++)
+            {
+                fun_[i] = fun[i-1] + (double)ksiNumb[i-1] / T.n;
+            }
+        }
+        public void R_(ticket T)
+        {
+            Sort(ksiV, T.n);
+            R = ksiV[T.n-1] - ksiV[0];
+        }
+        public void x(double[] n, int exp)
+        {
+            x_ = 0;
+            for (int i = 0; i < exp; i++)
+            {
+                x_ += n[i];
+            }
+            x_ = x_ / exp;
+
+        }
+
+        public void S(double[] n, int exp, double x_)
+        {
+            S2 = 0;
+            for (int i = 0; i < exp; i++)
+            {
+                S2 += (n[i] - x_) * (n[i] - x_);
+            }
+            S2 = S2 / exp;
+
+        }
+
+        public void MathWait(double[] ksiProbability, int[] ksiValue)
+        {
+            mw = 0;
+            for (int i = 0; i < ksiCount + 1; i++)
+            {
+                mw += ksiProbability[i] * ksiValue[i];
+            }
+
+        }
+
+        public void MathWait_x_(double x_, double mw)
+        {
+            mw_x = Math.Abs(mw - x_);
+        }
+
+        public void disp_(double disp, double S2)
+        {
+            disp_S2 = Math.Abs(disp - S2);
+        }
+
+        public void Disp(double mw, int[] ksiValue, double[] ksiProbability)
+        {
+            disp = 0;
+            for (int i = 0; i < ksiCount + 1; i++)
+            {
+                disp += ksiProbability[i] * (ksiValue[i] - mw);
+            }
+
+        }
+
 
         public void Raspr(ticket T)
         {
-            //SetKsiCount(T);
-            //FillKsiValue(T);
+            
             FillKsiProbability(T);
             FillKsiProbability(T);
             FillKsiRasp();
             ksiNumb = Exp(T.n);
             FillksiN(T.n);
+            MaxProb(prob, ksiProbability);
+            MathWait(ksiProbability, ksiValue);
+            x(n, T.n);
+            MathWait_x_(x_, mw);
+            S(n, T.n, x_);
+            Disp(mw, ksiValue, ksiProbability);
+            disp_(disp, S2);
+            R_(T);
+            function();
+            function_(T);
         }
-        
-
     }
 }
+
 
 
 
